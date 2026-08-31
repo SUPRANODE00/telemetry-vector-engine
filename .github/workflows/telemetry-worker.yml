@@ -1,0 +1,47 @@
+name: Telemetry Worker Configuration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  configure-worker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure .env with optimized settings
+        run: |
+          cat > .env <<EOF
+          # Telemetry Worker Configuration
+          MQTT_URL=mqtt://localhost:1883
+          MQTT_USER=${{ secrets.MQTT_USER }}
+          MQTT_PASS=${{ secrets.MQTT_PASS }}
+          WORKER_SCRIPT=zenith_ingest.py
+          WORKER_ID=zenith-worker-${{ github.run_number }}
+          LISTEN_PORT=$((9100 + (${{ github.run_number }} % 100)))
+          SOURCE_TYPE=api
+          EOF
+
+      - name: Validate .env configuration
+        run: |
+          echo "=== Environment Configuration ==="
+          cat .env
+          echo ""
+          echo "=== Validation Checks ==="
+          grep -q "WORKER_ID=" .env && echo "✓ WORKER_ID set"
+          grep -q "LISTEN_PORT=" .env && echo "✓ LISTEN_PORT set"
+          grep -q "MQTT_URL=" .env && echo "✓ MQTT_URL set"
+
+      - name: Push configuration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .env
+          git commit -m "Update: Auto-configure worker settings for run ${{ github.run_number }}" || echo "No changes to commit"
+          git push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
