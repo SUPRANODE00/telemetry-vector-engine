@@ -35,3 +35,11 @@ wheels/
 # OS
 .DS_Store
 Thumbs.db
+# Worker Environment Configurations
+.env.worker*
+
+# Runtime Telemetry & Execution Logs
+*.log
+
+# Build & Ingest Target Directories
+targets/
