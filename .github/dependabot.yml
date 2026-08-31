@@ -1,11 +1,26 @@
 version: 2
 updates:
+  # Package Ecosystem: Python (pip)
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    open-pull-requests-limit: 10
+    target-branch: "main"
+    labels:
+      - "dependencies"
+      - "security"
+    # Allow automatic vulnerability updates for security advisories
+    allow:
+      - dependency-type: "all"
 
+  # Package Ecosystem: GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    open-pull-requests-limit: 5
+    target-branch: "main"
+    labels:
+      - "actions"
+      - "security"
