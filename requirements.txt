@@ -4,4 +4,4 @@ idna==3.19
 paho-mqtt==2.1.0
 prometheus_client==0.26.0
 requests==2.34.2
-urllib3==2.7.0
+urllib3==2.8.0
